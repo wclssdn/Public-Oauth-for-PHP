@@ -19,6 +19,12 @@ abstract class Oauth {
 	protected $secret;
 
 	/**
+	 * 第三方提供的用户唯一ID
+	 * @var number|string
+	 */
+	protected $uid;
+
+	/**
 	 * access token
 	 * @var string
 	 */
@@ -114,10 +120,26 @@ abstract class Oauth {
 	 * @param string $refresh
 	 */
 	public function __construct($key, $secret, $access = '', $refresh = '') {
-		$this->key = key;
+		$this->key = $key;
 		$this->secret = $secret;
 		$this->access = $access;
 		$this->refresh = $refresh;
+	}
+
+	/**
+	 * 设置uid 第三方提供的用户唯一ID
+	 * @param string|number $uid
+	 */
+	public function setUid($uid){
+		$this->uid = $uid;
+	}
+
+	/**
+	 * 获取uid 返回第三方提供的用户唯一ID
+	 * @return Ambigous <number, string>
+	 */
+	public function getUid(){
+		return $this->uid;
 	}
 
 	/**
@@ -232,7 +254,7 @@ abstract class Oauth {
 	 */
 	protected function curl($url, $method = 'get', $body = '', array $headers = array()) {
 		$customHeader = $this->customHeader();
-		$headers = array_merge(headers, $customHeader);
+		$headers = array_merge($headers, $customHeader);
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_URL, $url);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);

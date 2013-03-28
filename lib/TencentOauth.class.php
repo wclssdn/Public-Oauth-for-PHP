@@ -39,6 +39,7 @@ class TencentOauth extends Oauth {
 		$params['client_id'] = $this->key;
 		$params['redirect_uri'] = $callback;
 		$params['response_type'] = $responseType;
+		$params['forcelogin'] = $this->force;
 		$params['type'] = '';
 		return 'https://open.t.qq.com/cgi-bin/oauth2/authorize?' . http_build_query($params);
 	}
@@ -53,11 +54,13 @@ class TencentOauth extends Oauth {
 		$params['redirect_uri'] = $callback;
 		$r = $this->request('https://open.t.qq.com/cgi-bin/oauth2/access_token?' . http_build_query($params));
 		parse_str($r, $out);
-		if ($r['access_token']){
+		Debug::dump($out);
+		if (isset($out['access_token'])){
+			$this->access = $out['access_token'];
 			$this->refresh = $out['refresh_token'];
-			return $out['access_token'];
+			return $this->access;
 		}
-		return $out;
+		return false;
 	}
 	/*
 	 * (non-PHPdoc) @see Oauth::refreshAccessToken()
@@ -73,6 +76,6 @@ class TencentOauth extends Oauth {
 			$this->refresh = $out['refresh_token'];
 			return $out['access_token'];
 		}
-		return $out;
+		return false;
 	}
 }

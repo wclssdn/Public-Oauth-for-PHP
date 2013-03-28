@@ -44,6 +44,8 @@ class SinaOauth extends Oauth {
 	 * (non-PHPdoc) @see Oauth::getAccessToken()
 	 */
 	public function getAccessToken($code, $callback) {
+		$params['client_id'] = $this->key;
+		$params['client_secret'] = $this->secret;
 		$params['grant_type'] = 'authorization_code';
 		$params['code'] = $code;
 		$params['redirect_uri'] = $callback;
@@ -51,8 +53,10 @@ class SinaOauth extends Oauth {
 		if (is_array($response) && !isset($response['error'])){
 			$this->access = $response['access_token'];
 			$this->refresh = isset($response['refresh_token']) ? $response['refresh_token'] : '';
+			$this->uid = $response['uid'];
+			return $this->access;
 		}
-		return $this->access;
+		return false;
 	}
 	/*
 	 * (non-PHPdoc) @see Oauth::refreshAccessToken()
@@ -64,7 +68,8 @@ class SinaOauth extends Oauth {
 		if (is_array($response) && !isset($response['error'])){
 			$this->access = $response['access_token'];
 			$this->refresh = isset($response['refresh_token']) ? $response['refresh_token'] : '';
+			return $this->access;
 		}
-		return $this->access;
+		return false;
 	}
 }
